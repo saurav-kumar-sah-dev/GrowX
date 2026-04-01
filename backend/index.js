@@ -62,16 +62,29 @@ if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
 }
 
 // ✅ Security
+// COOP default "same-origin" breaks Firebase Google signInWithPopup (auth/internal-error).
+// frame-src: default-src is 'self' only — auth needs Google/Firebase iframes.
 app.use(
   helmet({
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
     contentSecurityPolicy: {
       directives: {
         "default-src": ["'self'"],
         "style-src": ["'self'", "'unsafe-inline'"],
         "script-src": ["'self'", "'unsafe-inline'"],
         "img-src": ["'self'", "data:", "https:", "blob:"],
-        "connect-src": ["'self'", "https:"],
+        "connect-src": ["'self'", "https:", "wss:"],
         "font-src": ["'self'", "data:"],
+        "frame-src": [
+          "'self'",
+          "https://www.google.com",
+          "https://accounts.google.com",
+          "https://*.google.com",
+          "https://*.googleapis.com",
+          "https://*.gstatic.com",
+          "https://*.firebaseapp.com",
+          "https://*.firebase.com",
+        ],
         "object-src": ["'none'"],
         "media-src": ["'self'", "https:", "blob:"],
       },
