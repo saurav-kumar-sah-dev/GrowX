@@ -1,9 +1,5 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
 # After first deploy, set FRONTEND_URL to your service URL (e.g. https://growx.onrender.com) for CORS.
-#
-# Google login: Login/Signup use Firebase Auth. Vite embeds VITE_FIREBASE_* at BUILD time — add every
-# VITE_FIREBASE_* below in the Render dashboard (same values as Firebase Console → Project settings → Your apps).
-# Also add your *.onrender.com domain under Firebase → Authentication → Settings → Authorized domains.
 
 services:
   - type: web
@@ -32,18 +28,4 @@ services:
       - key: ADMIN_PASSWORD
         sync: false
       - key: JWT_SECRET
-        sync: false
-      - key: FIREBASE_WEB_API_KEY
-        sync: false
-      - key: VITE_FIREBASE_API_KEY
-        sync: false
-      - key: VITE_FIREBASE_AUTH_DOMAIN
-        sync: false
-      - key: VITE_FIREBASE_PROJECT_ID
-        sync: false
-      - key: VITE_FIREBASE_STORAGE_BUCKET
-        sync: false
-      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
-        sync: false
-      - key: VITE_FIREBASE_APP_ID
         sync: false
