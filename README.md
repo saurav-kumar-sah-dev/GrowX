@@ -2,6 +2,24 @@
 
 Full‑stack app: **Express + MongoDB** backend and **Vite + React** frontend.
 
+## Documentation & config (repo files)
+
+| Topic | File |
+|--------|------|
+| Deploy to Render (build/start, env) | [DEPLOYMENT.md](DEPLOYMENT.md) |
+| Production issues (email, CORS, Gmail app password) | [PRODUCTION_FIX.md](PRODUCTION_FIX.md) |
+| Pre‑launch checklist | [PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md) |
+| Render Blueprint (optional) | [render.yaml](render.yaml) |
+| Root environment template | [.env.example](.env.example) |
+| Frontend / Vite environment template | [frontend/.env.example](frontend/.env.example) |
+| Production Vite defaults (relative `/api` paths) | [frontend/.env.production](frontend/.env.production) |
+| Admin dashboard notes | [ADMIN_DASHBOARD.md](ADMIN_DASHBOARD.md) |
+| Resume builder / ATS docs | [RESUME_CHECKER_DOCUMENTATION.md](RESUME_CHECKER_DOCUMENTATION.md), [RESUME_DESIGN_IMPROVEMENTS.md](RESUME_DESIGN_IMPROVEMENTS.md) |
+| Quiz feature | [QUIZ_IMPLEMENTATION.md](QUIZ_IMPLEMENTATION.md) |
+| Seed admin user (script) | [backend/seed/seedAdmin.js](backend/seed/seedAdmin.js) |
+| Admin dashboard completion notes | [ADMIN_DASHBOARD_COMPLETION.md](ADMIN_DASHBOARD_COMPLETION.md) |
+| Learning dashboard sidebar | [LEARNING_DASHBOARD_SIDEBAR.md](LEARNING_DASHBOARD_SIDEBAR.md) |
+
 ## Prerequisites
 
 - **Node.js**: recommended **v20+** (works on newer versions too).
