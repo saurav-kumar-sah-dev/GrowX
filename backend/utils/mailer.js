@@ -37,7 +37,16 @@ export const verifyMailer = async () => {
   try {
     const t = createTransporter();
     if (!t) return;
-    await t.verify();
+    const ms = parseInt(process.env.MAIL_VERIFY_TIMEOUT_MS || "12000", 10);
+    await Promise.race([
+      t.verify(),
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Connection timeout")),
+          Math.max(3000, ms)
+        )
+      ),
+    ]);
     console.log(`✅ Mailer ready — sending as ${process.env.MAIL_USER}`);
   } catch (err) {
     console.warn("⚠️ Mailer connection failed:", err.message);

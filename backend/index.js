@@ -17,6 +17,7 @@ dotenv.config();
 
 import admin from "firebase-admin";
 import connectDB from "./utils/db.js";
+import { normalizeFirebasePrivateKey } from "./utils/firebaseKey.js";
 import { verifyMailer } from "./utils/mailer.js";
 
 // Routes
@@ -44,21 +45,48 @@ const app = express();
 // client IPs and so express-rate-limit does not throw ERR_ERL_UNEXPECTED_X_FORWARDED_FOR (500s on every request).
 app.set("trust proxy", 1);
 
-// ✅ Firebase Init (safe)
-if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
+// ✅ Firebase Init (safe) — Google *popup* auth uses FIREBASE_WEB_API_KEY, not Admin.
+const _fbPrivateKey = normalizeFirebasePrivateKey(
+  process.env.FIREBASE_PRIVATE_KEY || ""
+);
+if (
+  !admin.apps.length &&
+  process.env.FIREBASE_PROJECT_ID &&
+  process.env.FIREBASE_CLIENT_EMAIL &&
+  _fbPrivateKey
+) {
+  if (
+    !_fbPrivateKey.includes("BEGIN PRIVATE KEY") &&
+    !_fbPrivateKey.includes("BEGIN RSA PRIVATE KEY")
+  ) {
+    console.warn(
+      "Firebase Admin: FIREBASE_PRIVATE_KEY missing PEM header — re-paste from the service account JSON (private_key field)."
+    );
+  }
   try {
     admin.initializeApp({
       credential: admin.credential.cert({
         type: "service_account",
         project_id: process.env.FIREBASE_PROJECT_ID,
-        private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+        private_key: _fbPrivateKey,
         client_email: process.env.FIREBASE_CLIENT_EMAIL,
       }),
     });
     console.log("🔥 Firebase Admin initialized");
   } catch (err) {
     console.error("Firebase Admin error:", err.message);
+    console.warn(
+      "→ Fix FIREBASE_PRIVATE_KEY on Render: copy the exact `private_key` from the Firebase service account JSON (one line with \\n for newlines). One wrong character breaks parsing."
+    );
   }
+} else if (
+  process.env.FIREBASE_PROJECT_ID &&
+  !admin.apps.length &&
+  !_fbPrivateKey
+) {
+  console.warn(
+    "Firebase Admin skipped (no FIREBASE_PRIVATE_KEY). Google sign-in still works if FIREBASE_WEB_API_KEY is set."
+  );
 }
 
 // ✅ Security
