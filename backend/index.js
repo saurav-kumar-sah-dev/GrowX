@@ -82,7 +82,7 @@ app.use(
 // ✅ CORS
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://growx-platform.onrender.com",
+  "https://growx-yp2u.onrender.com",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 

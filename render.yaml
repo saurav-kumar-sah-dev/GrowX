@@ -1,5 +1,9 @@
 # Render Blueprint: https://render.com/docs/blueprint-spec
 # After first deploy, set FRONTEND_URL to your service URL (e.g. https://growx.onrender.com) for CORS.
+#
+# Google sign-in: VITE_FIREBASE_* must be set here (or in the dashboard) so `npm run build` embeds them.
+# Backend Google verification needs FIREBASE_WEB_API_KEY (same value as VITE_FIREBASE_API_KEY from Firebase).
+# In Firebase Console → Authentication → Settings → Authorized domains, add your Render hostname.
 
 services:
   - type: web
@@ -28,4 +32,18 @@ services:
       - key: ADMIN_PASSWORD
         sync: false
       - key: JWT_SECRET
+        sync: false
+      - key: FIREBASE_WEB_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: VITE_FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: VITE_FIREBASE_APP_ID
         sync: false

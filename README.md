@@ -4,14 +4,14 @@ Full‑stack app: **Express + MongoDB** backend and **Vite + React** frontend.
 
 ## Live app
 
-- **Production:** [https://growx-fa8f.onrender.com](https://growx-fa8f.onrender.com)
-- **API health:** [https://growx-fa8f.onrender.com/api/health](https://growx-fa8f.onrender.com/api/health)
+- **Production:** [https://growx-yp2u.onrender.com](https://growx-yp2u.onrender.com)
+- **API health:** [https://growx-yp2u.onrender.com/api/health](https://growx-yp2u.onrender.com/api/health)
 
 ## Documentation & config (repo files)
 
 | Topic | File |
 |--------|------|
-| Live deployment (Render) | [https://growx-fa8f.onrender.com](https://growx-fa8f.onrender.com) |
+| Live deployment (Render) | [https://growx-yp2u.onrender.com](https://growx-yp2u.onrender.com) |
 | Deploy to Render (build/start, env) | [DEPLOYMENT.md](DEPLOYMENT.md) |
 | Production issues (email, CORS, Gmail app password) | [PRODUCTION_FIX.md](PRODUCTION_FIX.md) |
 | Pre‑launch checklist | [PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md) |
