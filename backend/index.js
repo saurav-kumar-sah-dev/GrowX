@@ -143,6 +143,31 @@ app.get("/api/health", (req, res) => {
   res.json({ success: true, message: "API running" });
 });
 
+// Public Firebase web config (same keys as VITE_* / Firebase console — needed when the SPA
+// bundle was built without VITE_FIREBASE_* but the server has them at runtime).
+app.get("/api/config/firebase", (req, res) => {
+  const apiKey =
+    process.env.VITE_FIREBASE_API_KEY || process.env.FIREBASE_WEB_API_KEY || "";
+  const authDomain = process.env.VITE_FIREBASE_AUTH_DOMAIN || "";
+  const projectId =
+    process.env.VITE_FIREBASE_PROJECT_ID ||
+    process.env.FIREBASE_PROJECT_ID ||
+    "";
+  const storageBucket = process.env.VITE_FIREBASE_STORAGE_BUCKET || "";
+  const messagingSenderId =
+    process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "";
+  const appId = process.env.VITE_FIREBASE_APP_ID || "";
+  res.set("Cache-Control", "no-store");
+  res.json({
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+  });
+});
+
 // ✅ Serve Frontend Static Files
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 app.get("*", (req, res) => {
