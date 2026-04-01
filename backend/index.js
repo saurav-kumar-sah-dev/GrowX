@@ -40,6 +40,10 @@ const { Server } = require("socket.io");
 
 const app = express();
 
+// Render / most PaaS sit behind a reverse proxy (X-Forwarded-For). Required for correct
+// client IPs and so express-rate-limit does not throw ERR_ERL_UNEXPECTED_X_FORWARDED_FOR (500s on every request).
+app.set("trust proxy", 1);
+
 // ✅ Firebase Init (safe)
 if (!admin.apps.length && process.env.FIREBASE_PROJECT_ID) {
   try {
@@ -100,12 +104,12 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
-// ✅ Rate Limit
+// ✅ Rate limit API only (not static /assets — avoids burning the budget on chunk loads)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 1000,
 });
-app.use(limiter);
+app.use("/api", limiter);
 
 // ✅ Server + Socket
 const server = http.createServer(app);
