@@ -56,18 +56,37 @@ Frontend runs on **`http://localhost:5173`**.
 
 ## Environment variables
 
-Create/update root `.env` at `GrowX-main/.env`.
+Create/update root `.env` at `GrowX-main/.env` and `frontend/.env` for local development.
 
-Minimum required to start:
+### Backend (.env) - Required
 - **`PORT`** (default 5000)
 - **`FRONTEND_URL`** (usually `http://localhost:5173`)
 - **`MONGO_URI`**
 - **`SECRET_KEY`** (JWT signing)
+- **`JWT_SECRET`** (admin authentication)
 
-Optional but used by features:
+### Backend (.env) - Optional
 - **Email (Nodemailer)**: `MAIL_USER`, `MAIL_PASS`, `MAIL_HOST`, `MAIL_PORT`
 - **Cloudinary uploads**: `CLOUD_NAME`, `API_KEY`, `API_SECRET`
-- **Firebase**: `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `FIREBASE_WEB_API_KEY`
+- **Firebase Admin**: `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `FIREBASE_WEB_API_KEY`
+- **Admin credentials**: `ADMIN_EMAIL`, `ADMIN_PASSWORD`
+- **Email verification**: `SKIP_EMAIL_VERIFICATION=true` (for local dev)
+
+### Frontend (frontend/.env) - Required for Google OAuth
+```bash
+# Firebase Client Configuration
+VITE_FIREBASE_API_KEY=your_firebase_web_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+# API Endpoints
+VITE_API_BASE=http://localhost:5000/api
+VITE_USER_API=http://localhost:5000/api/v1/user
+# ... other API endpoints
+```
 
 ### Local dev toggle: skip email verification
 
@@ -96,22 +115,81 @@ node backend/seed/seedAdmin.js
 
 Then log in at `http://localhost:5173/admin/login`.
 
+## Google OAuth Setup
+
+### Step 1: Firebase Console Configuration
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select your project
+3. Go to **Authentication** → **Sign-in method**
+4. **Enable** Google provider
+5. Add authorized domains:
+   - `localhost` (local development)
+   - `http://localhost:5173` (local development)
+   - `https://your-production-url.com` (production)
+
+### Step 2: Google Cloud Console Configuration
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Navigate to **APIs & Services** → **Credentials**
+3. Find your OAuth 2.0 Client ID
+4. Add to **Authorized JavaScript origins**:
+   - `http://localhost:5173`
+   - `https://your-production-url.com`
+5. Add to **Authorized redirect URIs**:
+   - `https://your-project.firebaseapp.com/__/auth/handler`
+
+### Step 3: Environment Variables
+For **single service deployment** (backend + frontend together):
+- Add all `VITE_*` variables to your deployment platform
+- Ensure `VITE_FIREBASE_*` variables are available during build
+
+For **separate services**:
+- Backend: Firebase Admin SDK variables
+- Frontend: `VITE_FIREBASE_*` variables
+
 ## Troubleshooting
 
-### “Email Not Verified” on login
+### Google OAuth Issues
+
+**"Firebase: Error (auth/internal-error)"**
+- **Most common cause**: Google provider not enabled in Firebase Console
+- **Solution**: Enable Google Authentication in Firebase Console (Step 1 above)
+- **Wait time**: Changes may take 5-10 minutes to take effect
+
+**"redirect_uri_mismatch"**
+- Check Google Cloud Console authorized redirect URIs
+- Ensure production URL is added to authorized origins
+- Verify Firebase project ID matches exactly
+
+**Local vs Production Differences**
+- Local: Uses `frontend/.env` file
+- Production: Uses deployment platform environment variables
+- Build-time variables must be set before deployment
+
+### "Email Not Verified" on login
 
 This is expected when `SKIP_EMAIL_VERIFICATION=false` and SMTP is not configured/working.
-- Use “Resend Verification Email” on the login page (requires working mail config), or
+- Use "Resend Verification Email" on login page (requires working mail config), or
 - Set `SKIP_EMAIL_VERIFICATION=true` for local development and sign up again.
 
-### “PayloadTooLargeError: request entity too large”
+### "PayloadTooLargeError: request entity too large"
 
 Happens when uploading large JSON/file payloads (e.g., resume/ATS). The backend is configured to accept larger payloads, but if you still see it:
-- restart the backend after changes, and
-- reduce the upload size or increase the Express body limit further.
+- restart backend after changes, and
+- reduce upload size or increase Express body limit further.
 
-### “Must supply api_key” (profile image / Cloudinary)
+### "Must supply api_key" (profile image / Cloudinary)
 
 Cloudinary env vars must be set in root `.env`:
 - `CLOUD_NAME`, `API_KEY`, `API_SECRET`
 
+### Deployment Issues
+
+**Single Service (Backend + Frontend Together)**
+- Ensure all `VITE_*` variables are in deployment environment
+- Build process needs access to frontend environment variables
+- Backend serves frontend from `/frontend/dist`
+
+**Separate Services**
+- Frontend: Needs `VITE_*` variables at build time
+- Backend: Needs server-side environment variables at runtime
+- CORS must be properly configured between services
