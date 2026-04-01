@@ -10,5 +10,11 @@ export function normalizeFirebasePrivateKey(raw) {
   ) {
     k = k.slice(1, -1).trim();
   }
-  return k.replace(/\\n/g, "\n").replace(/\r\n/g, "\n").trim();
+  k = k.replace(/\\n/g, "\n").replace(/\r\n/g, "\n");
+  // Common paste typo: extra "n" before PKCS#8 body (must start with MII…)
+  k = k.replace(
+    /(-----BEGIN PRIVATE KEY-----\s*)n(?=MII)/,
+    "$1"
+  );
+  return k.trim();
 }
